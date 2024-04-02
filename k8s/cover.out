@@ -1,0 +1,14 @@
+mode: set
+github.com/mnorrsken/certmanager-ca/k8s/client.go:23.35,26.16 3 0
+github.com/mnorrsken/certmanager-ca/k8s/client.go:26.16,28.3 1 0
+github.com/mnorrsken/certmanager-ca/k8s/client.go:30.2,31.16 2 0
+github.com/mnorrsken/certmanager-ca/k8s/client.go:31.16,33.3 1 0
+github.com/mnorrsken/certmanager-ca/k8s/client.go:35.2,37.8 1 0
+github.com/mnorrsken/certmanager-ca/k8s/client.go:40.86,42.16 2 1
+github.com/mnorrsken/certmanager-ca/k8s/client.go:42.16,44.3 1 0
+github.com/mnorrsken/certmanager-ca/k8s/client.go:46.2,46.59 1 1
+github.com/mnorrsken/certmanager-ca/k8s/client.go:50.87,62.16 3 1
+github.com/mnorrsken/certmanager-ca/k8s/client.go:62.16,64.3 1 0
+github.com/mnorrsken/certmanager-ca/k8s/client.go:66.2,67.16 2 1
+github.com/mnorrsken/certmanager-ca/k8s/client.go:67.16,69.3 1 0
+github.com/mnorrsken/certmanager-ca/k8s/client.go:70.2,70.12 1 1

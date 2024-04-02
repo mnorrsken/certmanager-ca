@@ -1,53 +1,59 @@
 package api
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
+
+	"github.com/gin-gonic/gin"
 )
 
-type Handler struct {
-	clientset *kubernetes.Clientset
+type Certificate struct {
+	Name      string   `json:"name"`
+	Hostnames []string `json:"hostnames"`
 }
 
-func NewHandler() (*Handler, error) {
-	config, err := clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
+var certificates []Certificate
+
+func initKubernetesClient() (*kubernetes.Clientset, error) {
+	// Path to the kubeconfig file
+	kubeconfig := "/path/to/kubeconfig"
+
+	// Build the client configuration
+	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build Kubernetes config: %v", err)
+		return nil, err
 	}
 
+	// Create the clientset
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create Kubernetes client: %v", err)
+		return nil, err
 	}
 
-	return &Handler{
-		clientset: clientset,
-	}, nil
+	return clientset, nil
 }
 
-func (h *Handler) CreateCertificate(w http.ResponseWriter, r *http.Request) {
-	// Implement the logic to create a cert-manager Certificate resource
+func CreateCertificate(c *gin.Context) {
+	var certificate Certificate
+
+	if err := c.ShouldBindJSON(&certificate); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// create a new certificate in kubernetes
+
+	certificates = append(certificates, certificate)
+
+	c.JSON(http.StatusCreated, certificate)
 }
 
-func (h *Handler) DeleteCertificate(w http.ResponseWriter, r *http.Request) {
-	// Implement the logic to delete a cert-manager Certificate resource
-}
+func SetupRouter() *gin.Engine {
+	r := gin.Default()
 
-func (h *Handler) DownloadSecretData(w http.ResponseWriter, r *http.Request) {
-	// Implement the logic to download data from the created TLS secrets
-}
+	r.POST("/certificates", CreateCertificate)
 
-func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	router := mux.NewRouter()
-	router.HandleFunc("/certificates", h.CreateCertificate).Methods("POST")
-	router.HandleFunc("/certificates/{name}", h.DeleteCertificate).Methods("DELETE")
-	router.HandleFunc("/secrets/{name}/download", h.DownloadSecretData).Methods("GET")
-
-	router.ServeHTTP(w, r)
+	return r
 }
